@@ -11,15 +11,16 @@ NumDialog::NumDialog(int correctNumber, QWidget *parent)
   int rand_start = correctNumber * 10;
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<> code(rand_start, rand_start + 9);
+  std::uniform_int_distribution<> code(rand_start, rand_start + 1);
   int res_pic_code = code(gen);
   QString prefix = "../resource/img/math_pic/";
   QString suffix = ".png";
   QString pic_path = prefix + QString::number(res_pic_code) + suffix;
   QPixmap pixmap(pic_path);
+  // QDebug()<<"path: "<<pic_path;
   imageLabel->setPixmap(pixmap);
   mainLayout->addWidget(imageLabel);
-
+  // imageLabel.setpos
   // 创建一个 QLineEdit 来输入数字
   inputField = new QLineEdit(this);
   inputField->setPlaceholderText("Enter the number");

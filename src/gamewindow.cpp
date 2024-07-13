@@ -42,7 +42,7 @@ GameScene::GameScene(QWidget *parent)
   this->setFixedSize(initWidth, initHeight);
   QString iconPath = "../resource/img/icon/icon.png";
   this->setWindowIcon(QIcon(iconPath));
-  this->setWindowTitle("扫雷");
+  this->setWindowTitle("扫雷(All Hell's Mathematics!)");
   QPushButton *backButton = new QPushButton(this);
   backButton->setGeometry(QRect(10, 10, 15, 20));
   QString backIcon = "../resource/img/icon/back.png";

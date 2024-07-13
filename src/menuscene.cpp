@@ -18,7 +18,7 @@ MenuScene::MenuScene(QWidget *parent)
   setFixedSize(800, 610);
   QString iconPath = IconPrefix + "icon.png";
   setWindowIcon(QIcon(iconPath));
-  setWindowTitle("扫雷(All Hells Mathematic!)");
+  setWindowTitle("扫雷(All Hell's Mathematics!)");
   // 背景
   QPixmap background(IconPrefix + "ms_bg.png");
   QPalette palette(this->palette());

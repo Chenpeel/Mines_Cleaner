@@ -9,19 +9,21 @@
 
 ### 食用指北🧭
 
-#### 下载🦐
 
-克隆到本地或下载[release]()：
+#### 编译工具、库要求
+
+- Qt5   : [Qt](https://www.qt.io/)
+- QtSql : [Qt SQL](https://doc.qt.io/qt-6/qtsql-index.html)
+- CMake : [下载](https://cmake.org/download/)
+- Make  : [在windows上安装make](https://zhuanlan.zhihu.com/p/630244738)、[下载](https://www.gnu.org/software/make/)
+  
+
+
+#### 下载🦐
 
 ```bash
 git clone https://github.com/Chenpeel/Mines_Cleaner.git
 ```
-
-编译工具、库要求
-
-- Qt5
-- QtSql
-- CMake
 
 进入目录
 
@@ -51,23 +53,18 @@ make
 
 
 
-<u>**注意**</u>⚠️
-
-- cmake 和 make 工具需要提前下载
-- [Cmake下载](https://cmake.org/download/)，[Make下载](https://www.gnu.org/software/make/)、[在windows上安装make](https://zhuanlan.zhihu.com/p/630244738)
-
-
 ### 简单展示
 
 1. 进入游戏 
-   ![pic](./resource/img/other/image-20240427000038136.png)
+   ![开始页面](./resource/img/other/start_show.png)
 
 2. 选择难度
+   ![关卡选择](./resource/img/other/level_show.png)
 
-3. 点击探索
-4. 锚定数目
-5. 扫除所有
-6. 扫除失败
+3. 游戏界面
+   ![游戏初始页面](./resource/img/other/game_show.png)   
+   ![显示难题](./resource/img/other/medium_show.png)
+4. 扫除失败
 
 
 

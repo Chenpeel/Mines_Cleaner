@@ -12,7 +12,7 @@ LevelScene::LevelScene() {
   game = new GameScene(this);
 
   this->setFixedSize(400, 330);
-  this->setWindowTitle("扫雷(All Hells Mathematic!)");
+  this->setWindowTitle("扫雷(All Hell's Mathematics!)");
   this->setWindowIcon(QIcon("../resource/img/icon/icon.png"));
   /**
    * btns
