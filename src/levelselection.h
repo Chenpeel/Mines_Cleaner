@@ -1,24 +1,34 @@
-#ifndef __LEVEL_SELECTION_H__
-#define __LEVEL_SELECTION_H__
+#ifndef __LEVEL__SELECTION_H__
+#define __LEVEL__SELECTION_H__
+
 #include <QWidget>
+#include <memory>
 
 #include "gamewindow.h"
+
+enum class GameDifficulty { Easy, Medium, Hard };
 class LevelScene : public QWidget {
   Q_OBJECT
 
- private:
-  GameScene *game;
-
  public:
-  explicit LevelScene();
+  explicit LevelScene(QWidget *parent = nullptr);
   ~LevelScene();
 
  signals:
   void back_menu();
-  void easy();
-  void medium();
-  void hard();
-  void custom(int width, int height);
+ public slots:
+  void newGame(int width, int height);
+  void onBackLevel();
+
+ private:
+  void setupUI();
+  void startNewGame(GameDifficulty difficulty);
+  void startNewGame(int width, int height);
+  void connectSignals(GameScene *game);
+  void disconnectSignals(GameScene *game);
+  std::unique_ptr<GameScene> game;
+  QPushButton *back_menu_btn;
+  QPushButton *btn[4];
 };
 
-#endif
+#endif  // LEVELSELECTION_H

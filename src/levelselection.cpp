@@ -1,5 +1,6 @@
 #include "levelselection.h"
 
+#include <QDebug>
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
@@ -8,23 +9,43 @@
 #include "gamewindow.h"
 #include "menuscene.h"
 
-LevelScene::LevelScene() {
-  game = new GameScene(this);
+LevelScene::LevelScene(QWidget *parent) : QWidget(parent), game(nullptr) {
+  setupUI();
+  connect(back_menu_btn, &QPushButton::clicked, this, &LevelScene::back_menu);
 
+  connect(btn[0], &QPushButton::clicked, this, [=]() {
+    qDebug() << "Easy button clicked";
+    QTimer::singleShot(50, this, [=]() { startNewGame(GameDifficulty::Easy); });
+  });
+  connect(btn[1], &QPushButton::clicked, this, [=]() {
+    qDebug() << "Medium button clicked";
+    QTimer::singleShot(50, this,
+                       [=]() { startNewGame(GameDifficulty::Medium); });
+  });
+  connect(btn[2], &QPushButton::clicked, this, [=]() {
+    qDebug() << "Hard button clicked";
+    QTimer::singleShot(50, this, [=]() { startNewGame(GameDifficulty::Hard); });
+  });
+  connect(btn[3], &QPushButton::clicked, this, [=]() {
+    qDebug() << "Custom button clicked";
+    InputDialog dialog(this);
+    while (dialog.exec() == QDialog::Accepted) {
+      int width = dialog.getWidth();
+      int height = dialog.getHeight();
+      if (width > 7 && width <= 100 && height > 5 && height <= 80) {
+        QTimer::singleShot(50, this, [=]() { startNewGame(width, height); });
+        break;
+      }
+    }
+  });
+}
+
+void LevelScene::setupUI() {
   this->setFixedSize(400, 330);
   this->setWindowTitle("扫雷(All Hell's Mathematics!)");
   this->setWindowIcon(QIcon("../resource/img/icon/icon.png"));
-  /**
-   * btns
-   *
-   * back_menu_btn : back_menu()
-   * btn0 : easy()   10 * 6
-   * btn1 : medium() 20 * 12
-   * btn2 : hard()  35 * 24
-   * btn3 : custom(int width,int height)
-   *
-   */
-  QPushButton *back_menu_btn = new QPushButton(this);
+
+  back_menu_btn = new QPushButton(this);
   back_menu_btn->setIcon(QIcon("../resource/img/icon/back.png"));
   back_menu_btn->setStyleSheet(
       "QPushButton {"
@@ -41,16 +62,7 @@ LevelScene::LevelScene() {
       "}");
   back_menu_btn->setFixedSize(20, 20);
   back_menu_btn->move(10, 10);
-  connect(back_menu_btn, &QPushButton::clicked, this,
-          [=]() { emit this->back_menu(); });
-  connect(game, &GameScene::back_level, [=]() {
-    QTimer::singleShot(50, this, [=]() {
-      game->hide();
-      this->show();
-    });
-  });
 
-  QPushButton *btn[4];
   for (int i = 0; i < 4; ++i) {
     btn[i] = new QPushButton(QString("btn %1").arg(i), this);
     btn[i]->setFixedSize(160, 40);
@@ -76,38 +88,64 @@ LevelScene::LevelScene() {
   btn[1]->setText("中等");
   btn[2]->setText("偏上");
   btn[3]->setText("创造");
-
-  connect(btn[0], &QPushButton::clicked, game, [=]() {
-    QTimer::singleShot(50, this, [=]() {
-      game->easy();
-      this->hide();
-    });
-  });
-  connect(btn[1], &QPushButton::clicked, game, [=]() {
-    QTimer::singleShot(50, this, [=]() {
-      game->medium();
-      this->hide();
-    });
-  });
-  connect(btn[2], &QPushButton::clicked, game, [=]() {
-    QTimer::singleShot(50, this, [=]() {
-      game->hard();
-      this->hide();
-    });
-  });
-  connect(btn[3], &QPushButton::clicked, this, [=]() {
-    InputDialog dialog(this);
-    while (dialog.exec() == QDialog::Accepted) {
-      int width = dialog.getWidth();
-      int height = dialog.getHeight();
-      if (width > 7 && width <= 100 && height > 5 && height <= 80) {
-        QTimer::singleShot(50, this, [=]() {
-          game->custom(width, height);
-          this->hide();
-        });
-        break;
-      }
-    }
-  });
 }
+
+void LevelScene::connectSignals(GameScene *game) {
+  qDebug() << "Connecting signals";
+  connect(game, &GameScene::back_level, this, &LevelScene::onBackLevel);
+  connect(game, &GameScene::newGame, this, &LevelScene::newGame);
+}
+
+void LevelScene::disconnectSignals(GameScene *game) {
+  qDebug() << "Disconnecting signals";
+  disconnect(game, &GameScene::back_level, this, &LevelScene::onBackLevel);
+  disconnect(game, &GameScene::newGame, this, &LevelScene::newGame);
+}
+
+void LevelScene::startNewGame(GameDifficulty difficulty) {
+  if (game) {
+    disconnectSignals(game.get());
+    game.reset();
+  }
+  game = std::make_unique<GameScene>(this);
+  switch (difficulty) {
+    case GameDifficulty::Easy:
+      game->easy();
+      break;
+    case GameDifficulty::Medium:
+      game->medium();
+      break;
+    case GameDifficulty::Hard:
+      game->hard();
+      break;
+  }
+  connectSignals(game.get());
+  this->hide();
+}
+
+void LevelScene::startNewGame(int width, int height) {
+  if (game) {
+    disconnectSignals(game.get());
+    game.reset();
+  }
+  game = std::make_unique<GameScene>(this);
+  game->custom(width, height);
+  connectSignals(game.get());
+  this->hide();
+}
+
+void LevelScene::newGame(int width, int height) {
+  qDebug() << "Starting new game with width:" << width << " height:" << height;
+  startNewGame(width, height);
+}
+
+void LevelScene::onBackLevel() {
+  qDebug() << "Back to level selection";
+  if (game) {
+    game->hide();
+    game.reset();
+  }
+  this->show();
+}
+
 LevelScene::~LevelScene() {}

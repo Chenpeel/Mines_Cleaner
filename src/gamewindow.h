@@ -1,16 +1,37 @@
 #ifndef __GAME_WINDOW_H__
 #define __GAME_WINDOW_H__
+#include <QDateTime>
+#include <QDebug>
+#include <QFile>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QMouseEvent>
+#include <QPushButton>
+#include <QRegularExpression>
+#include <QScreen>
+#include <QStatusBar>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <iostream>
+#include <queue>
+#include <random>
 
 #include "MyGraphicsScene.h"
 #include "fielddata.h"
 #include "unititem.h"
+
+struct recordInfo {
+  QString userName;
+  int elapsedTime;
+  QString level;
+  QString realTime;
+};
+
 class GameScene : public QMainWindow {
   Q_OBJECT
  public:
@@ -19,6 +40,7 @@ class GameScene : public QMainWindow {
 
  signals:
   void back_level();
+  void newGame(int width, int height);
 
  public slots:
   void easy();
@@ -35,7 +57,7 @@ class GameScene : public QMainWindow {
   MyGraphicsScene *scene;
   QTimer *timer;
   QLabel *timeLabel;
-  int elapsedSeconds;
+  recordInfo record;
   void showMap();
   void startTimer();
   void updateTimer();
@@ -45,19 +67,16 @@ class GameScene : public QMainWindow {
  private:
   UnitItem *uitem;
   UnitMatrix map;
-  Matrix matrix;
   int remain_init;
   int remain_mines;
   void initializeMap();
-  void empty_extand(double pos_x, double pos_y, Matrix matrix);
-  void surround_extand(int x, int y, double pos_x, double pos_y, Matrix matrix);
+  void empty_extand(double pos_x, double pos_y);
+  void surround_extand(int x, int y, double pos_x, double pos_y);
   void youLose();
   bool isWin();
   bool isNumComputeCorrect(int N);
-  void newGame();
-  void recordTime(int time, QString name);  // local record
-  void recordTimeOnline(int time, QString name,
-                        QString id);  // onlinesql record
+  void recordToLocal(recordInfo record);     // local record
+  void recordTimeOnline(recordInfo record);  // onlinesql record
 
  protected:
   void mousePressEvent(QMouseEvent *event) override;

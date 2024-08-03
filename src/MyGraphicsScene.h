@@ -18,7 +18,6 @@ class MyGraphicsScene : public QGraphicsScene {
   void initMap();
   void clearMap();
   void addItemToScene(QGraphicsItem *item);
-
 };
 
 #endif
